@@ -1,0 +1,402 @@
+/* =========================================================
+   Estilos globales del MVP. Bootstrap 5 hace el trabajo
+   responsive; aquí solo van los colores de AquaChile y los
+   componentes propios. Cada módulo puede agregar su propio
+   archivo CSS (ej: src/styles/candidatos.css).
+   ========================================================= */
+
+:root {
+  --aq-ink: #102a36;      /* texto principal */
+  --aq-fjord: #1d5266;    /* color de marca */
+  --aq-glacier: #3a92a8;  /* acento frío */
+  --aq-mist: #e8f0f2;     /* fondos suaves */
+  --aq-paper: #f6f9fa;    /* fondo general */
+  --aq-line: #d3e0e4;     /* bordes */
+  --aq-salmon: #e98a72;   /* detalle de marca, se usa poco */
+  --aq-kelp: #3e7d5b;     /* recomendado */
+  --aq-amber: #c58a1e;    /* con observaciones */
+  --aq-coral: #b9483b;    /* no recomendado / alertas */
+
+  --bs-body-font-family: 'Public Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --bs-body-color: var(--aq-ink);
+  --bs-body-bg: var(--aq-paper);
+  --bs-border-color: var(--aq-line);
+  --bs-link-color: var(--aq-fjord);
+  --bs-link-color-rgb: 29, 82, 102;
+  --bs-link-hover-color: var(--aq-ink);
+  --bs-primary: var(--aq-fjord);
+  --bs-primary-rgb: 29, 82, 102;
+  --bs-focus-ring-color: rgba(58, 146, 168, 0.35);
+}
+
+body {
+  font-feature-settings: 'tnum' 0;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--aq-fjord);
+  --bs-btn-border-color: var(--aq-fjord);
+  --bs-btn-hover-bg: var(--aq-ink);
+  --bs-btn-hover-border-color: var(--aq-ink);
+  --bs-btn-active-bg: var(--aq-ink);
+  --bs-btn-active-border-color: var(--aq-ink);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--aq-fjord);
+  --bs-btn-border-color: var(--aq-fjord);
+  --bs-btn-hover-bg: var(--aq-fjord);
+  --bs-btn-hover-border-color: var(--aq-fjord);
+  --bs-btn-active-bg: var(--aq-ink);
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: var(--aq-glacier);
+  box-shadow: 0 0 0 0.2rem var(--bs-focus-ring-color);
+}
+
+.form-check-input:checked {
+  background-color: var(--aq-fjord);
+  border-color: var(--aq-fjord);
+}
+
+:focus-visible {
+  outline: 2px solid var(--aq-glacier);
+  outline-offset: 2px;
+}
+
+.aq-num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Estructura ---------- */
+.aq-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.aq-app main {
+  flex: 1;
+}
+
+.aq-navbar {
+  background: var(--aq-ink);
+  --bs-navbar-color: rgba(255, 255, 255, 0.72);
+  --bs-navbar-hover-color: #fff;
+  --bs-navbar-active-color: #fff;
+  --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.25);
+}
+.aq-navbar .navbar-toggler {
+  color: #fff;
+}
+.aq-navbar .nav-link {
+  border-radius: 6px;
+  padding-inline: 0.75rem !important;
+}
+.aq-navbar .nav-link.active {
+  background: rgba(255, 255, 255, 0.1);
+}
+.aq-nav-publico {
+  color: var(--aq-salmon) !important;
+}
+.aq-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #fff !important;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.aq-brand small {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.aq-footer {
+  padding: 1.25rem 0;
+  font-size: 0.8rem;
+  color: #5d727b;
+  border-top: 1px solid var(--aq-line);
+}
+
+.aq-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.aq-page-header h1 {
+  font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.25rem;
+}
+.aq-page-header p {
+  margin: 0;
+  max-width: 60ch;
+  color: #4d636d;
+}
+.aq-page-header__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.aq-panel {
+  background: #fff;
+  border: 1px solid var(--aq-line);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+.aq-panel__titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* ---------- Etapas (pieza principal del panel) ---------- */
+.aq-pipeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 1rem;
+}
+.aq-pipeline__paso {
+  --tono: var(--aq-glacier);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 0.15rem;
+  border: 0;
+  padding: 1.1rem 1.5rem 1.1rem 2.1rem;
+  background: var(--aq-mist);
+  color: var(--aq-ink);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 16px 50%);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.aq-pipeline__paso:first-child {
+  padding-left: 1.25rem;
+  border-radius: 10px 0 0 10px;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%);
+}
+.aq-pipeline__paso:last-child {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 16px 50%);
+  border-radius: 0 10px 10px 0;
+}
+.aq-pipeline__paso--recibida { --tono: #6aa7b8; }
+.aq-pipeline__paso--agendada { --tono: var(--aq-glacier); }
+.aq-pipeline__paso--realizada { --tono: var(--aq-fjord); }
+.aq-pipeline__paso--enviado { --tono: var(--aq-kelp); }
+
+.aq-pipeline__paso::before {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 4px;
+  background: var(--tono);
+}
+.aq-pipeline__paso:hover {
+  background: #dce9ed;
+}
+.aq-pipeline__paso.is-activa {
+  background: var(--tono);
+  color: #fff;
+}
+.aq-pipeline__cantidad {
+  font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.aq-pipeline__nombre {
+  font-weight: 600;
+}
+.aq-pipeline__meta {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+@media (max-width: 767.98px) {
+  .aq-pipeline {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .aq-pipeline__paso,
+  .aq-pipeline__paso:first-child,
+  .aq-pipeline__paso:last-child {
+    clip-path: none;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+}
+
+/* ---------- Indicadores ---------- */
+.aq-indicadores {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #fff;
+  border: 1px solid var(--aq-line);
+  border-radius: 10px;
+}
+.aq-indicador {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.25rem;
+}
+.aq-indicador + .aq-indicador {
+  border-left: 1px solid var(--aq-line);
+}
+.aq-indicador__valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.aq-indicador__etiqueta {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.aq-indicador__detalle {
+  font-size: 0.8rem;
+  color: #5d727b;
+}
+@media (max-width: 767.98px) {
+  .aq-indicadores {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .aq-indicador:nth-child(3) {
+    border-left: 0;
+  }
+  .aq-indicador:nth-child(n + 3) {
+    border-top: 1px solid var(--aq-line);
+  }
+}
+
+/* ---------- Tabla ---------- */
+.aq-tabla {
+  --bs-table-bg: transparent;
+  font-size: 0.925rem;
+}
+.aq-tabla thead th {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5d727b;
+  border-bottom-color: var(--aq-line);
+}
+.aq-tabla__nombre {
+  display: block;
+  font-weight: 600;
+  text-decoration: none;
+}
+.aq-tabla__nombre:hover {
+  text-decoration: underline;
+}
+.aq-tabla__sub {
+  display: block;
+  font-size: 0.8rem;
+  color: #5d727b;
+}
+
+/* ---------- Etiquetas de etapa y resultado ---------- */
+.aq-etapa,
+.aq-resultado {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.aq-etapa--recibida { background: #e3f0f4; color: #2c6475; }
+.aq-etapa--agendada { background: #d6ebf0; color: #1f6577; }
+.aq-etapa--realizada { background: #d2e1e7; color: var(--aq-fjord); }
+.aq-etapa--enviado { background: #dcefe3; color: #2f6648; }
+
+.aq-resultado--ok { background: #dcefe3; color: #2f6648; }
+.aq-resultado--obs { background: #f8ecd2; color: #7d5610; }
+.aq-resultado--no { background: #f6dedb; color: #8f342a; }
+
+.aq-alerta-texto {
+  color: var(--aq-coral);
+  font-size: 0.875rem;
+}
+
+/* ---------- Paneles laterales ---------- */
+.aq-barra {
+  display: flex;
+  height: 14px;
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--aq-mist);
+  gap: 2px;
+}
+.aq-leyenda {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  font-size: 0.875rem;
+}
+.aq-leyenda li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+}
+.aq-leyenda__punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.aq-carga {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.9rem;
+  font-size: 0.875rem;
+}
+.aq-carga__pista {
+  height: 6px;
+  background: var(--aq-mist);
+  border-radius: 3px;
+  margin-top: 0.35rem;
+}
+.aq-carga__pista span {
+  display: block;
+  height: 100%;
+  background: var(--aq-glacier);
+  border-radius: 3px;
+}
+
+/* ---------- Estados vacíos ---------- */
+.aq-vacio {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #4d636d;
+}
+.aq-vacio i {
+  font-size: 2rem;
+  color: var(--aq-glacier);
+}
+.aq-vacio p {
+  margin: 0.75rem auto 1rem;
+  max-width: 45ch;
+}
+.aq-vacio--compacto {
+  padding: 2rem 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
