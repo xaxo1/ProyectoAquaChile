@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useData } from '../../context/DataContext';
-import { ANALISTAS, EVALUADORES, FAMILIAS_CARGO, ORIGENES, UBICACIONES } from '../../data/mockData';
+import { useAuth } from '../../context/AuthContext';
+import { FAMILIAS_CARGO, ORIGENES, UBICACIONES } from '../../data/catalogos';
 import { tieneErrores, validarCandidato } from '../../utils/validaciones';
 
 const VACIO = {
@@ -12,7 +13,7 @@ const VACIO = {
   ubicacion: '',
   origen: 'Interno',
   crearSolicitud: true,
-  analista: ANALISTAS[0],
+  analista: '',
   responsableId: '',
 };
 
@@ -22,21 +23,27 @@ const VACIO = {
  * Props: abierto (bool), onCerrar(fn), onRegistrado(fn(mensaje))
  */
 export default function ModalRegistroRapido({ abierto, onCerrar, onRegistrado }) {
-  const { agregarCandidato, crearSolicitud } = useData();
+  const { agregarCandidato, crearSolicitud, evaluadores } = useData();
+  const { usuario } = useAuth();
   const [form, setForm] = useState(VACIO);
   const [tocados, setTocados] = useState({});
   const [enviado, setEnviado] = useState(false);
+  const [guardando, setGuardando] = useState(false);
+  const [errorApi, setErrorApi] = useState('');
   const primerCampo = useRef(null);
 
   const errores = validarCandidato(form);
+  if (form.crearSolicitud && !form.analista.trim()) errores.analista = 'Indica el analista que solicita.';
   const mostrarError = (campo) => (enviado || tocados[campo]) && errores[campo];
 
   // Al abrir: limpia el formulario y enfoca el primer campo. Escape cierra.
   useEffect(() => {
     if (!abierto) return undefined;
-    setForm(VACIO);
+    // Si quien registra es analista, queda como solicitante por defecto
+    setForm({ ...VACIO, analista: usuario?.rol === 'analista' ? usuario.nombre : '' });
     setTocados({});
     setEnviado(false);
+    setErrorApi('');
     primerCampo.current?.focus();
     const alPresionar = (e) => e.key === 'Escape' && onCerrar();
     document.addEventListener('keydown', alPresionar);
@@ -45,7 +52,7 @@ export default function ModalRegistroRapido({ abierto, onCerrar, onRegistrado })
       document.removeEventListener('keydown', alPresionar);
       document.body.classList.remove('modal-open');
     };
-  }, [abierto, onCerrar]);
+  }, [abierto, onCerrar, usuario]);
 
   if (!abierto) return null;
 
@@ -55,35 +62,36 @@ export default function ModalRegistroRapido({ abierto, onCerrar, onRegistrado })
   };
   const marcar = (e) => setTocados((t) => ({ ...t, [e.target.name]: true }));
 
-  const guardar = (e) => {
+  const guardar = async (e) => {
     e.preventDefault();
     setEnviado(true);
     if (tieneErrores(errores)) return;
 
     const { crearSolicitud: conSolicitud, analista, responsableId, ...datosCandidato } = form;
-    const candidato = agregarCandidato({
-      ...datosCandidato,
-      nombre: datosCandidato.nombre.trim(),
-      email: datosCandidato.email.trim().toLowerCase(),
-      telefono: datosCandidato.telefono.replace(/\s/g, ''),
-    });
-
-    if (conSolicitud) {
-      crearSolicitud({
-        candidatoId: candidato.id,
-        cargo: candidato.cargo,
-        familiaCargo: candidato.familiaCargo,
-        ubicacion: candidato.ubicacion,
-        analista,
-        responsableId,
-      });
+    setGuardando(true);
+    setErrorApi('');
+    try {
+      const candidato = await agregarCandidato(datosCandidato);
+      if (conSolicitud) {
+        await crearSolicitud({
+          candidatoId: candidato.id,
+          cargo: candidato.cargo,
+          familiaCargo: candidato.familiaCargo,
+          ubicacion: candidato.ubicacion,
+          analista,
+          responsableId: responsableId ? Number(responsableId) : null,
+        });
+      }
+      onRegistrado(
+        conSolicitud
+          ? `${candidato.nombre} quedó registrado con su solicitud en "Evaluación recibida".`
+          : `${candidato.nombre} quedó registrado.`
+      );
+    } catch (err) {
+      setErrorApi(err.message);
+    } finally {
+      setGuardando(false);
     }
-
-    onRegistrado(
-      conSolicitud
-        ? `${candidato.nombre} quedó registrado con su solicitud en "Evaluación recibida".`
-        : `${candidato.nombre} quedó registrado.`
-    );
   };
 
   const clase = (campo) => `form-control ${mostrarError(campo) ? 'is-invalid' : ''}`;
@@ -100,6 +108,7 @@ export default function ModalRegistroRapido({ abierto, onCerrar, onRegistrado })
             </div>
 
             <div className="modal-body">
+              {errorApi && <div className="alert alert-danger" role="alert">{errorApi}</div>}
               <div className="row g-3">
                 <div className="col-12">
                   <label htmlFor="rr-nombre" className="form-label">Nombre completo</label>
@@ -163,15 +172,14 @@ export default function ModalRegistroRapido({ abierto, onCerrar, onRegistrado })
                   <>
                     <div className="col-md-6">
                       <label htmlFor="rr-analista" className="form-label">Analista que solicita</label>
-                      <select id="rr-analista" name="analista" className="form-select" value={form.analista} onChange={cambiar}>
-                        {ANALISTAS.map((a) => <option key={a} value={a}>{a}</option>)}
-                      </select>
+                      <input id="rr-analista" name="analista" className={clase('analista')} value={form.analista} onChange={cambiar} onBlur={marcar} />
+                      <div className="invalid-feedback">{errores.analista}</div>
                     </div>
                     <div className="col-md-6">
                       <label htmlFor="rr-responsable" className="form-label">Evaluador responsable</label>
                       <select id="rr-responsable" name="responsableId" className="form-select" value={form.responsableId} onChange={cambiar}>
                         <option value="">Asignar después</option>
-                        {EVALUADORES.map((ev) => <option key={ev.id} value={ev.id}>{ev.nombre}</option>)}
+                        {evaluadores.map((ev) => <option key={ev.id} value={ev.id}>{ev.nombre}</option>)}
                       </select>
                     </div>
                   </>
@@ -181,7 +189,9 @@ export default function ModalRegistroRapido({ abierto, onCerrar, onRegistrado })
 
             <div className="modal-footer">
               <button type="button" className="btn btn-outline-secondary" onClick={onCerrar}>Cancelar</button>
-              <button type="submit" className="btn btn-primary">Registrar candidato</button>
+              <button type="submit" className="btn btn-primary" disabled={guardando}>
+                {guardando ? 'Guardando...' : 'Registrar candidato'}
+              </button>
             </div>
           </form>
         </div>

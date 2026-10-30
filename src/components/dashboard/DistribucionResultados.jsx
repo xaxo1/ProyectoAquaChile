@@ -1,4 +1,4 @@
-import { RESULTADOS } from '../../data/mockData';
+import { RESULTADOS } from '../../data/catalogos';
 
 const COLORES = {
   Recomendado: 'var(--aq-kelp)',

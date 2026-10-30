@@ -1,4 +1,4 @@
-import { FAMILIAS_CARGO } from '../../data/mockData';
+import { FAMILIAS_CARGO } from '../../data/catalogos';
 
 /**
  * Búsqueda por texto y filtro por familia de cargo.

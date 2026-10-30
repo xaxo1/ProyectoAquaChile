@@ -1,4 +1,4 @@
-import { ETAPAS } from '../../data/mockData';
+import { ETAPAS } from '../../data/catalogos';
 
 /**
  * Recorrido de las solicitudes por etapa (reemplaza el tablero de Planner).

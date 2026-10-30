@@ -1,8 +1,4 @@
-import { ETAPAS, EVALUADORES } from '../data/mockData';
-
-export function generarId(prefijo) {
-  return `${prefijo}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-}
+import { ETAPAS } from '../data/catalogos';
 
 // Fecha de hoy en formato YYYY-MM-DD usando la hora local (no UTC).
 export function hoyISO() {
@@ -32,8 +28,8 @@ export function estadoDeEtapa(etapaId) {
   return obtenerEtapa(etapaId).estado;
 }
 
-export function nombreEvaluador(evaluadorId) {
-  return EVALUADORES.find((e) => e.id === evaluadorId)?.nombre ?? 'Sin asignar';
+export function nombreEvaluador(evaluadorId, evaluadores = []) {
+  return evaluadores.find((e) => e.id === evaluadorId)?.nombre ?? 'Sin asignar';
 }
 
 export function iniciales(nombre = '') {

@@ -1,12 +1,12 @@
 /**
  * Cálculos del dashboard. Son funciones puras (reciben datos y devuelven
- * datos), así que se pueden probar fácilmente con Jasmine en la EP2.
+ * datos), así que se pueden probar fácilmente con Vitest.
  */
-import { ETAPAS, EVALUADORES, RESULTADOS } from '../data/mockData';
+import { ETAPAS, RESULTADOS } from '../data/catalogos';
 import { diasEntre, hoyISO, nombreEvaluador } from './formatters';
 
 // Une cada solicitud con su candidato y su evaluación para la tabla.
-export function construirFilas(solicitudes, candidatos, evaluaciones, hoy = hoyISO()) {
+export function construirFilas(solicitudes, candidatos, evaluaciones, evaluadores = [], hoy = hoyISO()) {
   return solicitudes
     .map((s) => {
       const candidato = candidatos.find((c) => c.id === s.candidatoId);
@@ -19,7 +19,8 @@ export function construirFilas(solicitudes, candidatos, evaluaciones, hoy = hoyI
         cargo: s.cargo,
         familiaCargo: s.familiaCargo,
         ubicacion: s.ubicacion || candidato?.ubicacion || '—',
-        responsable: nombreEvaluador(s.responsableId),
+        responsableId: s.responsableId,
+        responsable: nombreEvaluador(s.responsableId, evaluadores),
         sinResponsable: !s.responsableId,
         etapa: s.etapa,
         fechaSolicitud: s.fechaSolicitud,
@@ -38,11 +39,14 @@ export function contarPorEtapa(solicitudes) {
   return conteo;
 }
 
-export function filtrarFilas(filas, { etapa = null, busqueda = '', familia = '' } = {}) {
+// responsable: id del evaluador, 'sin' para las no asignadas o vacío para todas
+export function filtrarFilas(filas, { etapa = null, busqueda = '', familia = '', responsable = '' } = {}) {
   const texto = busqueda.trim().toLowerCase();
   return filas.filter((f) => {
     if (etapa && f.etapa !== etapa) return false;
     if (familia && f.familiaCargo !== familia) return false;
+    if (responsable === 'sin' && !f.sinResponsable) return false;
+    if (responsable && responsable !== 'sin' && f.responsableId !== Number(responsable)) return false;
     if (texto && !`${f.nombre} ${f.cargo} ${f.responsable}`.toLowerCase().includes(texto)) return false;
     return true;
   });
@@ -58,8 +62,8 @@ export function resumenResultados(evaluaciones) {
   return { total: finalizadas.length, conteo };
 }
 
-export function cargaPorEvaluador(solicitudes) {
-  return EVALUADORES.map((ev) => {
+export function cargaPorEvaluador(solicitudes, evaluadores = []) {
+  return evaluadores.map((ev) => {
     const propias = solicitudes.filter((s) => s.responsableId === ev.id);
     return {
       id: ev.id,
