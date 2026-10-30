@@ -2,56 +2,109 @@
 
 Aplicación web para gestionar candidatos, solicitudes y evaluaciones psicolaborales del área de Reclutamiento y Selección de AquaChile. Proyecto VcM de la asignatura DSY1104 Desarrollo Full Stack II, Duoc UC.
 
-> Etapa actual: **frontend con datos simulados** (todos los datos son ficticios).
+> Todos los datos de la aplicación son ficticios.
 
 ## Tecnologías
 
-- React 18 + Vite
-- React Router 6
-- Bootstrap 5 + Bootstrap Icons
+| Capa | Tecnología |
+|---|---|
+| Frontend | React 18 + Vite, React Router 6, Bootstrap 5 + Bootstrap Icons |
+| Backend | Node.js + Express 5 (monolítico: entrega la API y el frontend compilado) |
+| Base de datos | PostgreSQL en Supabase |
+| Autenticación | JWT + contraseñas encriptadas con bcrypt |
+| Pruebas | Vitest + Testing Library + Supertest |
 
 ## Cómo ejecutarlo
 
-Requiere Node.js 18 o superior.
+Requiere Node.js 20 o superior.
 
-```bash
-npm install
-npm run dev
-```
+1. Instalar dependencias:
 
-Abre la dirección que muestra la terminal (normalmente http://localhost:5173).
+   ```bash
+   npm install
+   ```
+
+2. Copiar `.env.example` como `.env` y completar `DATABASE_URL` con la cadena de conexión de Supabase
+   (Project Settings → Database → Connection string → *Session pooler*).
+
+3. Crear las tablas y cargar los datos de prueba (borra lo que exista):
+
+   ```bash
+   npm run db:init
+   ```
+
+4. Levantar backend y frontend al mismo tiempo:
+
+   ```bash
+   npm run dev
+   ```
+
+   Abrir http://localhost:5173. La API queda en http://localhost:3001.
+
+## Usuarios de prueba
+
+Todos usan la contraseña `Aqua2026`.
+
+| Usuario | Rol |
+|---|---|
+| paula.herrera@demo.cl | Analista de reclutamiento |
+| rodrigo.lagos@demo.cl | Analista de reclutamiento |
+| camila.rojas@demo.cl | Profesional evaluador |
+| diego.munoz@demo.cl | Profesional evaluador |
+| fernanda.soto@demo.cl | Profesional evaluador |
+
+El formulario público (`/postular`) no requiere sesión.
+
+## Scripts
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Backend (puerto 3001) y frontend (puerto 5173) |
+| `npm run db:init` | Crea las tablas y carga los datos de prueba |
+| `npm test` | Ejecuta las pruebas con Vitest |
+| `npm run coverage` | Pruebas con reporte de cobertura |
+| `npm run build` | Compila el frontend en `dist/` |
+| `npm start` | Servidor de producción (API + frontend compilado) |
 
 ## Estructura
 
 ```
+server/
+├── index.js               Arranca el servidor
+├── app.js                 Configuración de Express y rutas
+├── db.js                  Conexión a PostgreSQL (Supabase)
+├── middleware/auth.js     Verificación del token y de roles
+├── routes/                Endpoints de la API
+└── db/                    Script SQL y datos de prueba
 src/
-├── App.jsx                  Rutas de la aplicación
-├── main.jsx                 Punto de entrada
-├── context/DataContext.jsx  Estado global y acciones (único acceso a los datos)
-├── data/mockData.js         Datos simulados y catálogos (etapas, familias, etc.)
-├── utils/
-│   ├── validaciones.js      Reglas de validación de formularios
-│   ├── formatters.js        Fechas, ids y nombres
-│   └── dashboard.js         Cálculos del panel
-├── components/
-│   ├── layout/              Navbar y Layout
-│   ├── common/              Componentes compartidos (badges, encabezados)
-│   ├── dashboard/           Componentes del panel        (Integrante 1)
-│   ├── candidatos/          Componentes de candidatos    (Integrante 2)
-│   └── solicitudes/         Componentes de solicitudes   (Integrante 3)
-├── pages/
-│   ├── Dashboard.jsx                                     (Integrante 1)
-│   ├── candidatos/                                       (Integrante 2)
-│   └── solicitudes/                                      (Integrante 3)
+├── App.jsx                Rutas de la aplicación
+├── services/api.js        Llamadas al backend
+├── context/               Sesión (AuthContext) y datos (DataContext)
+├── data/catalogos.js      Etapas, familias de cargo, resultados, etc.
+├── utils/                 Validaciones y cálculos (compartidos con el backend)
+├── components/            layout, common, dashboard, candidatos, solicitudes
+├── pages/                 Una vista por ruta
 └── styles/global.css
 ```
 
-## Reglas del equipo
+## API
 
-- Los datos se leen y modifican **solo** con el hook `useData()`.
-- Los archivos compartidos (`context/`, `data/`, `utils/`, `App.jsx`, `components/common`, `components/layout`, `styles/global.css`) solo se cambian avisando al equipo.
-- Cada integrante trabaja en su rama y abre un Pull Request hacia `main`.
+| Método | Ruta | Descripción |
+|---|---|---|
+| POST | `/api/auth/login` | Inicia sesión y entrega el token |
+| GET | `/api/candidatos` | Lista de candidatos |
+| GET / POST / PUT | `/api/candidatos/:id` | Consultar, crear y editar candidatos |
+| GET / POST | `/api/solicitudes` | Lista y creación de solicitudes |
+| GET / PUT | `/api/solicitudes/:id` | Detalle; asignar responsable y fecha de entrevista |
+| PATCH | `/api/solicitudes/:id/etapa` | Cambiar la etapa (con reglas del proceso) |
+| PUT | `/api/solicitudes/:id/evaluacion` | Registrar la evaluación (solo evaluador) |
+| GET | `/api/solicitudes/evaluaciones` | Lista de evaluaciones |
+| GET | `/api/usuarios/evaluadores` | Evaluadores para asignar |
+| POST | `/api/postulaciones` | Formulario público (sin sesión) |
+
+Todas las rutas, excepto login y postulaciones, requieren el header `Authorization: Bearer <token>`.
 
 ## Documentación
 
-- `docs/AVANCE.md`: resumen del avance, modelo de datos y decisiones técnicas.
+- `docs/AVANCE.md`: problema, solución, modelo de datos y decisiones técnicas.
+- `docs/PRUEBAS.md`: evidencia y justificación de las pruebas con Vitest.

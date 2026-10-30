@@ -1,8 +1,8 @@
-# Avance semana 6: MVP Evaluación Psicolaboral AquaChile
+# Avance: MVP Evaluación Psicolaboral AquaChile
 
 **Asignatura:** DSY1104 Desarrollo Full Stack II, Duoc UC
 **Contraparte:** AquaChile, área de Reclutamiento y Selección
-**Fecha del avance:** 02/10/2026 (semana 6 de la Carta Gantt)
+**Fecha del avance:** 30/10/2026 (entrega AquaChile 1/2)
 
 ## 1. Problema
 
@@ -16,112 +16,119 @@ Una aplicación web que reúne en un solo sistema:
 2. **Panel (dashboard)** con todas las solicitudes, sus etapas e indicadores, desde donde también se puede registrar un candidato.
 3. **Seguimiento por etapas**, con las mismas columnas que hoy usa el Planner: Evaluación recibida → Entrevista agendada → Entrevista realizada → Informe enviado.
 4. **Registro de la evaluación** con el resultado que usa el Excel real: Recomendado, Recomendado con observaciones o No recomendado.
-5. **Base de datos centralizada** (etapa 2) que alimenta todas las vistas.
-6. **Apoyo con IA** (valor agregado): sugerir un puntaje y una categoría a partir de las observaciones de la entrevista. En esta etapa está simulado; la decisión final siempre la toma la psicóloga.
+5. **Base de datos centralizada** en Supabase que alimenta todas las vistas.
+6. **Inicio de sesión con roles**: el analista crea candidatos y solicitudes; el evaluador además registra la evaluación.
+7. **Apoyo con IA** (entrega 2/2): sugerir una categoría a partir de las observaciones de la entrevista. La decisión final siempre la toma la psicóloga.
 
 Equivalencia con los estados del anexo: *Pendiente* = Evaluación recibida; *En proceso* = Entrevista agendada o realizada; *Finalizada* = Informe enviado.
 
 ## 3. Arquitectura
 
 ```
-React 18 + Bootstrap 5  →  Backend monolítico (API REST)  →  Base de datos
-      (etapa 1, hoy)            (etapa 2, desde S8)            (etapa 2)
+React 18 + Bootstrap 5  →  Backend monolítico Node.js + Express (API REST)  →  PostgreSQL (Supabase)
 ```
 
-En esta etapa el frontend funciona con **datos simulados** guardados en un contexto de React (`DataContext`) que persiste en `localStorage`. Todas las vistas leen y escriben datos solo a través de ese contexto; en la etapa 2 se reemplaza el interior de cada acción por llamadas `fetch` a la API sin tocar los componentes.
+- **Frontend**: React con React Router. Todas las llamadas al backend pasan por `src/services/api.js`, que agrega el token de sesión. Los datos se guardan en un contexto (`DataContext`) para que todas las vistas usen la misma información.
+- **Backend**: un solo servidor Express. En desarrollo atiende solo la API; en producción también entrega el frontend compilado, por eso es monolítico y se despliega como un único servicio.
+- **Base de datos**: PostgreSQL alojado en Supabase (plan gratuito). El backend se conecta con la cadena de conexión del proyecto.
+- **Validaciones**: las mismas funciones de `src/utils/validaciones.js` se usan en los formularios y en la API, así una regla nunca queda distinta entre el front y el back.
 
 ## 4. Modelo de datos
 
 ```mermaid
 erDiagram
-    CANDIDATO ||--o{ SOLICITUD : "tiene"
-    SOLICITUD ||--o| EVALUACION : "genera"
-    EVALUADOR ||--o{ SOLICITUD : "es responsable de"
-    SOLICITUD ||--o{ HISTORIAL_ETAPA : "registra"
+    CANDIDATOS ||--o{ SOLICITUDES : "tiene"
+    SOLICITUDES ||--o| EVALUACIONES : "genera"
+    USUARIOS ||--o{ SOLICITUDES : "es responsable de"
+    SOLICITUDES ||--o{ HISTORIAL_ETAPAS : "registra"
 
-    CANDIDATO {
-        string id PK
+    USUARIOS {
+        int id PK
+        string nombre
+        string email
+        string password_hash
+        string rol "analista o evaluador"
+    }
+    CANDIDATOS {
+        int id PK
         string nombre
         string email
         string telefono
         string cargo
-        string familiaCargo
+        string familia_cargo
         string ubicacion
         string origen "Interno o Externo"
-        date fechaRegistro
-        string cvNombre
+        date fecha_registro
     }
-    SOLICITUD {
-        string id PK
-        string candidatoId FK
+    SOLICITUDES {
+        int id PK
+        int candidato_id FK
         string cargo
-        string familiaCargo
+        string familia_cargo
         string ubicacion
         string analista
-        string responsableId FK
+        int responsable_id FK
         string etapa
-        date fechaSolicitud
-        date fechaEntrevista
+        date fecha_solicitud
+        date fecha_entrevista
         string observaciones
     }
-    EVALUACION {
-        string id PK
-        string solicitudId FK
-        date fechaEvaluacion
+    EVALUACIONES {
+        int id PK
+        int solicitud_id FK
+        date fecha_evaluacion
         string resultado
         string observaciones
-        int puntajeIA
-        string estado
+        string estado "En proceso o Finalizada"
     }
-    EVALUADOR {
-        string id PK
-        string nombre
-    }
-    HISTORIAL_ETAPA {
-        string solicitudId FK
+    HISTORIAL_ETAPAS {
+        int id PK
+        int solicitud_id FK
         string etapa
         date fecha
         string comentario
+        string usuario
     }
 ```
 
 ## 5. Vistas y rutas
 
-| Ruta | Vista | Responsable |
+| Ruta | Vista | Acceso |
 |---|---|---|
-| `/` | Panel de evaluaciones (dashboard) | Integrante 1 (Nicolás) |
-| `/postular` | Formulario público de solicitud | Integrante 2 |
-| `/candidatos` | Listado de candidatos | Integrante 2 |
-| `/candidatos/nuevo`, `/candidatos/:id/editar` | Registro y edición de candidato | Integrante 2 |
-| `/candidatos/:id` | Ficha del candidato | Integrante 2 |
-| `/solicitudes` | Listado de solicitudes con filtros | Integrante 3 |
-| `/solicitudes/nueva` | Nueva solicitud | Integrante 3 |
-| `/solicitudes/:id` | Detalle, cambio de etapa, evaluación e IA | Integrante 3 |
+| `/login` | Inicio de sesión | Público |
+| `/postular` | Formulario público de solicitud | Público |
+| `/` | Panel de evaluaciones (dashboard) | Con sesión |
+| `/candidatos` | Listado de candidatos con búsqueda y filtros | Con sesión |
+| `/candidatos/nuevo`, `/candidatos/:id/editar` | Registro y edición de candidato | Con sesión |
+| `/candidatos/:id` | Ficha del candidato y sus solicitudes | Con sesión |
+| `/solicitudes` | Listado de solicitudes con filtros | Con sesión |
+| `/solicitudes/nueva` | Nueva solicitud | Con sesión |
+| `/solicitudes/:id` | Detalle: asignación, cambio de etapa, evaluación e historial | Con sesión |
 
-## 6. Lo que está funcionando hoy
+## 6. Flujo principal
 
-- Proyecto React con Vite, React Router y Bootstrap 5, versionado en GitHub.
-- Estructura de carpetas por módulo, datos simulados y validaciones compartidas.
-- Estado global con `useReducer` + Context API y persistencia local.
-- **Panel completo**: recorrido por etapas que filtra la tabla al hacer clic, indicadores generales, tabla de solicitudes con búsqueda y filtro por familia de cargo, distribución de resultados, carga por evaluador y registro rápido de candidato con validaciones (opcionalmente crea la solicitud).
-- Diseño responsive: en celular las etapas pasan a dos columnas, la tabla oculta columnas secundarias y el formulario se abre a pantalla completa.
-- Módulos de candidatos y solicitudes en desarrollo por los integrantes 2 y 3, con rutas ya creadas.
+1. El analista registra al candidato (o llega desde el formulario público).
+2. Crea la solicitud de evaluación: queda en **Evaluación recibida**.
+3. Asigna un evaluador y la fecha de entrevista, y la pasa a **Entrevista agendada**.
+4. Después de la entrevista pasa a **Entrevista realizada** y el evaluador registra el resultado y sus observaciones.
+5. Al enviar el informe pasa a **Informe enviado** y la evaluación queda **Finalizada**.
+6. El panel muestra en todo momento cuántas solicitudes hay en cada etapa y los indicadores del proceso.
+
+Reglas que valida el backend: solo se avanza o retrocede una etapa a la vez; no se puede agendar sin evaluador ni fecha; no se puede enviar el informe sin una evaluación registrada; solo un evaluador puede registrar la evaluación.
 
 ## 7. Decisiones técnicas
 
 | Tema | Decisión | Motivo |
 |---|---|---|
 | Framework | React 18 con Vite | Obligatorio en el anexo; Vite arranca más rápido que CRA |
-| Estilos | Bootstrap 5 + CSS propio | Grilla responsive y componentes de formulario listos |
-| Estado | Context API + useReducer | Un solo lugar para los datos, fácil de cambiar por la API |
-| Backend | *(definir)* Spring Boot / Node.js / PHP | Se decide antes de la semana 8 |
-| Base de datos | *(definir)* MySQL / PostgreSQL | Plan gratuito compatible con el backend |
-| Pruebas | Jasmine + Karma | Exigido en la rúbrica de la EP2 |
+| Estilos | Bootstrap 5 + CSS propio con los colores de AquaChile | Grilla responsive y componentes de formulario listos |
+| Estado | Context API + useReducer | Un solo lugar para los datos que vienen de la API |
+| Backend | Node.js + Express | Mismo lenguaje que el frontend; permite reutilizar las validaciones |
+| Base de datos | PostgreSQL en Supabase | Plan gratuito y compatible con el driver `pg` |
+| Sesión | JWT con duración de 8 horas | No requiere guardar sesiones en el servidor |
+| Pruebas | Vitest + Testing Library + Supertest | Exigido en la rúbrica; Vitest usa la misma configuración de Vite |
 
-## 8. Próximos pasos
+## 8. Pendiente para la entrega 2/2
 
-1. Integrar los módulos de candidatos y solicitudes (semana 7).
-2. Configurar Jasmine + Karma y escribir al menos 10 pruebas unitarias. Las funciones de `src/utils/dashboard.js`, `src/utils/validaciones.js` y el `dataReducer` ya están separadas para poder probarlas.
-3. Redactar el ERS y el documento de cobertura de testing para la EP2.
-4. Hito 1, frontend funcional (12 al 17 de octubre).
-5. Diseñar el backend monolítico y la base de datos (semana 8 en adelante).
+1. Apoyo con IA para sugerir la categoría del evaluado a partir de las observaciones.
+2. Ajustes de diseño y nuevas pruebas según la retroalimentación de esta entrega.
