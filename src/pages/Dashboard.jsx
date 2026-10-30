@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import PageHeader from '../components/common/PageHeader';
+import { Cargando, ErrorCarga } from '../components/common/EstadoCarga';
 import IndicadoresResumen from '../components/dashboard/IndicadoresResumen';
 import PipelineEtapas from '../components/dashboard/PipelineEtapas';
 import FiltrosDashboard from '../components/dashboard/FiltrosDashboard';
@@ -21,7 +22,7 @@ import {
 import { obtenerEtapa } from '../utils/formatters';
 
 export default function Dashboard() {
-  const { candidatos, solicitudes, evaluaciones, restablecerDatos } = useData();
+  const { candidatos, solicitudes, evaluaciones, evaluadores, cargando, error, cargarDatos } = useData();
 
   // Estado local del panel
   const [etapaActiva, setEtapaActiva] = useState(null);
@@ -32,8 +33,8 @@ export default function Dashboard() {
 
   // Datos derivados (se recalculan solo cuando cambian sus dependencias)
   const filas = useMemo(
-    () => construirFilas(solicitudes, candidatos, evaluaciones),
-    [solicitudes, candidatos, evaluaciones]
+    () => construirFilas(solicitudes, candidatos, evaluaciones, evaluadores),
+    [solicitudes, candidatos, evaluaciones, evaluadores]
   );
   const filasFiltradas = useMemo(
     () => filtrarFilas(filas, { etapa: etapaActiva, busqueda, familia }),
@@ -41,7 +42,7 @@ export default function Dashboard() {
   );
   const conteos = useMemo(() => contarPorEtapa(solicitudes), [solicitudes]);
   const resumen = useMemo(() => resumenResultados(evaluaciones), [evaluaciones]);
-  const carga = useMemo(() => cargaPorEvaluador(solicitudes), [solicitudes]);
+  const carga = useMemo(() => cargaPorEvaluador(solicitudes, evaluadores), [solicitudes, evaluadores]);
 
   const promedio = promedioDiasCierre(solicitudes);
   const recomendados = porcentajeRecomendados(evaluaciones);
@@ -68,6 +69,9 @@ export default function Dashboard() {
     limpiarFiltros();
     setAviso(mensaje);
   };
+
+  if (cargando) return <Cargando texto="Cargando el panel..." />;
+  if (error) return <ErrorCarga mensaje={error} onReintentar={cargarDatos} />;
 
   return (
     <>
@@ -123,9 +127,6 @@ export default function Dashboard() {
         <div className="col-12 col-xl-4 d-flex flex-column gap-4">
           <DistribucionResultados resumen={resumen} />
           <CargaEvaluadores carga={carga} sinAsignar={sinAsignar} />
-          <button type="button" className="btn btn-link btn-sm text-body-secondary align-self-start p-0" onClick={restablecerDatos}>
-            Restablecer datos de prueba
-          </button>
         </div>
       </div>
 
