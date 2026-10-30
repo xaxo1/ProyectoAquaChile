@@ -6,27 +6,28 @@
    ========================================================= */
 
 :root {
-  --aq-ink: #102a36;      /* texto principal */
-  --aq-fjord: #1d5266;    /* color de marca */
-  --aq-glacier: #3a92a8;  /* acento frío */
-  --aq-mist: #e8f0f2;     /* fondos suaves */
-  --aq-paper: #f6f9fa;    /* fondo general */
-  --aq-line: #d3e0e4;     /* bordes */
-  --aq-salmon: #e98a72;   /* detalle de marca, se usa poco */
+  /* Colores tomados del sitio oficial de AquaChile */
+  --aq-ink: #26343f;      /* texto principal */
+  --aq-fjord: #425563;    /* gris azulado de la marca */
+  --aq-glacier: #6f8496;  /* acento frío */
+  --aq-mist: #f3ebe6;     /* fondos suaves */
+  --aq-paper: #fef7f3;    /* fondo crema del sitio */
+  --aq-line: #e7dbd3;     /* bordes */
+  --aq-salmon: #fe5000;   /* naranjo de la marca, solo para detalles */
   --aq-kelp: #3e7d5b;     /* recomendado */
   --aq-amber: #c58a1e;    /* con observaciones */
   --aq-coral: #b9483b;    /* no recomendado / alertas */
 
-  --bs-body-font-family: 'Public Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --bs-body-font-family: 'Encode Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --bs-body-color: var(--aq-ink);
   --bs-body-bg: var(--aq-paper);
   --bs-border-color: var(--aq-line);
   --bs-link-color: var(--aq-fjord);
-  --bs-link-color-rgb: 29, 82, 102;
+  --bs-link-color-rgb: 66, 85, 99;
   --bs-link-hover-color: var(--aq-ink);
   --bs-primary: var(--aq-fjord);
-  --bs-primary-rgb: 29, 82, 102;
-  --bs-focus-ring-color: rgba(58, 146, 168, 0.35);
+  --bs-primary-rgb: 66, 85, 99;
+  --bs-focus-ring-color: rgba(254, 80, 0, 0.25);
 }
 
 body {
@@ -50,10 +51,15 @@ body {
   --bs-btn-active-bg: var(--aq-ink);
 }
 
+.form-control,
+.form-select {
+  background-color: #fff;
+}
+
 .form-control:focus,
 .form-select:focus,
 .form-check-input:focus {
-  border-color: var(--aq-glacier);
+  border-color: var(--aq-salmon);
   box-shadow: 0 0 0 0.2rem var(--bs-focus-ring-color);
 }
 
@@ -63,7 +69,7 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--aq-glacier);
+  outline: 2px solid var(--aq-salmon);
   outline-offset: 2px;
 }
 
@@ -82,7 +88,8 @@ body {
 }
 
 .aq-navbar {
-  background: var(--aq-ink);
+  background: var(--aq-fjord);
+  border-bottom: 3px solid var(--aq-salmon);
   --bs-navbar-color: rgba(255, 255, 255, 0.72);
   --bs-navbar-hover-color: #fff;
   --bs-navbar-active-color: #fff;
@@ -99,7 +106,54 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 .aq-nav-publico {
-  color: var(--aq-salmon) !important;
+  color: #ffd2bd !important;
+}
+.aq-usuario {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: 1rem;
+  padding-left: 1rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 0.875rem;
+  line-height: 1.15;
+}
+.aq-usuario small {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+.aq-btn-salir {
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.aq-btn-salir:hover {
+  background: var(--aq-salmon);
+  border-color: var(--aq-salmon);
+  color: #fff;
+}
+@media (max-width: 991.98px) {
+  .aq-usuario {
+    justify-content: space-between;
+    margin: 0.75rem 0 0.5rem;
+    padding: 0.75rem 0 0;
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* ---------- Vistas públicas ---------- */
+.aq-publica__header {
+  background: var(--aq-fjord);
+  border-bottom: 3px solid var(--aq-salmon);
+  padding: 0.75rem 0;
+}
+.aq-publica__header .aq-brand {
+  text-decoration: none;
+}
+.aq-login {
+  padding: 2rem;
 }
 .aq-brand {
   display: flex;
@@ -119,7 +173,7 @@ body {
 .aq-footer {
   padding: 1.25rem 0;
   font-size: 0.8rem;
-  color: #5d727b;
+  color: #67737c;
   border-top: 1px solid var(--aq-line);
 }
 
@@ -140,7 +194,7 @@ body {
 .aq-page-header p {
   margin: 0;
   max-width: 60ch;
-  color: #4d636d;
+  color: #55636d;
 }
 .aq-page-header__acciones {
   display: flex;
@@ -191,7 +245,7 @@ body {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 16px 50%);
   border-radius: 0 10px 10px 0;
 }
-.aq-pipeline__paso--recibida { --tono: #6aa7b8; }
+.aq-pipeline__paso--recibida { --tono: #a4b2bd; }
 .aq-pipeline__paso--agendada { --tono: var(--aq-glacier); }
 .aq-pipeline__paso--realizada { --tono: var(--aq-fjord); }
 .aq-pipeline__paso--enviado { --tono: var(--aq-kelp); }
@@ -204,7 +258,7 @@ body {
   background: var(--tono);
 }
 .aq-pipeline__paso:hover {
-  background: #dce9ed;
+  background: #ebe0d9;
 }
 .aq-pipeline__paso.is-activa {
   background: var(--tono);
@@ -265,7 +319,7 @@ body {
 }
 .aq-indicador__detalle {
   font-size: 0.8rem;
-  color: #5d727b;
+  color: #67737c;
 }
 @media (max-width: 767.98px) {
   .aq-indicadores {
@@ -287,7 +341,7 @@ body {
 .aq-tabla thead th {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #5d727b;
+  color: #67737c;
   border-bottom-color: var(--aq-line);
 }
 .aq-tabla__nombre {
@@ -301,7 +355,7 @@ body {
 .aq-tabla__sub {
   display: block;
   font-size: 0.8rem;
-  color: #5d727b;
+  color: #67737c;
 }
 
 /* ---------- Etiquetas de etapa y resultado ---------- */
@@ -314,9 +368,9 @@ body {
   font-weight: 600;
   white-space: nowrap;
 }
-.aq-etapa--recibida { background: #e3f0f4; color: #2c6475; }
-.aq-etapa--agendada { background: #d6ebf0; color: #1f6577; }
-.aq-etapa--realizada { background: #d2e1e7; color: var(--aq-fjord); }
+.aq-etapa--recibida { background: #eef0f2; color: #4a5a66; }
+.aq-etapa--agendada { background: #e2e8ee; color: #34495a; }
+.aq-etapa--realizada { background: #ffe6d9; color: #a63600; }
 .aq-etapa--enviado { background: #dcefe3; color: #2f6648; }
 
 .aq-resultado--ok { background: #dcefe3; color: #2f6648; }
@@ -381,7 +435,7 @@ body {
 .aq-vacio {
   text-align: center;
   padding: 3rem 1rem;
-  color: #4d636d;
+  color: #55636d;
 }
 .aq-vacio i {
   font-size: 2rem;
@@ -399,4 +453,103 @@ body {
   * {
     transition: none !important;
   }
+}
+
+/* ---------- Formularios y fichas ---------- */
+.aq-formulario {
+  max-width: 820px;
+  margin-inline: auto;
+}
+.aq-icono-exito {
+  font-size: 3rem;
+  color: var(--aq-kelp);
+}
+
+.aq-datos {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+}
+.aq-datos--2col {
+  grid-template-columns: repeat(2, 1fr);
+}
+.aq-datos dt {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #67737c;
+}
+.aq-datos dd {
+  margin: 0;
+}
+@media (max-width: 575.98px) {
+  .aq-datos--2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Etapas en el detalle de la solicitud ---------- */
+.aq-pasos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.4rem;
+  counter-reset: paso;
+}
+.aq-pasos li {
+  counter-increment: paso;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #67737c;
+}
+.aq-pasos li::before {
+  content: counter(paso);
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  border: 2px solid var(--aq-line);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.aq-pasos li.is-hecho::before {
+  content: '✓';
+  background: var(--aq-kelp);
+  border-color: var(--aq-kelp);
+  color: #fff;
+}
+.aq-pasos li.is-actual {
+  color: var(--aq-ink);
+  font-weight: 700;
+}
+.aq-pasos li.is-actual::before {
+  background: var(--aq-salmon);
+  border-color: var(--aq-salmon);
+  color: #fff;
+}
+
+.aq-historial {
+  list-style: none;
+  padding: 0 0 0 1rem;
+  margin: 0;
+  border-left: 2px solid var(--aq-line);
+  display: grid;
+  gap: 1rem;
+}
+.aq-historial li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.aq-historial li::before {
+  content: '';
+  position: absolute;
+  left: calc(-1rem - 6px);
+  top: 0.35rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--aq-fjord);
 }
