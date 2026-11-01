@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -25,10 +25,8 @@ function respuestaApi(status, cuerpo) {
   return vi.fn().mockResolvedValue({ ok: status < 400, status, json: async () => cuerpo });
 }
 
-afterEach(() => {
-  vi.unstubAllGlobals();
-  localStorage.clear();
-});
+//
+
 
 describe('Login', () => {
   it('muestra errores si se envía vacío y no llama a la API', async () => {

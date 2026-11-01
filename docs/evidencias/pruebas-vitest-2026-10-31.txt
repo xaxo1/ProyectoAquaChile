@@ -1,0 +1,85 @@
+
+> aquachile-evaluacion-psicolaboral@0.2.0 test
+> vitest run --reporter=verbose
+
+
+ RUN  v2.1.9 C:/Users/ignac/OneDrive/Escritorio/ProyectoAquaChile
+
+ ✓ server/api.test.js > POST /api/auth/login > responde 400 si faltan datos
+ ✓ server/api.test.js > POST /api/auth/login > responde 401 con contraseña incorrecta
+ ✓ server/api.test.js > POST /api/auth/login > entrega un token y no devuelve la contraseña
+ ✓ server/api.test.js > rutas protegidas > rechazan peticiones sin token
+ ✓ server/api.test.js > rutas protegidas > rechazan un token falso
+ ✓ server/api.test.js > rutas protegidas > devuelven los candidatos con un token válido
+ ✓ server/api.test.js > rutas protegidas > validan los datos del candidato antes de guardar
+ ✓ server/api.test.js > rutas protegidas > solo un evaluador puede registrar la evaluación
+ ✓ server/api.test.js > formulario público > no requiere sesión pero sí valida los datos
+ ✓ server/api.test.js > responde 404 en rutas de la API que no existen
+ ✓ src/utils/formatters.test.js > formatters > muestra la fecha en formato chileno
+ ✓ src/utils/formatters.test.js > formatters > calcula los días entre dos fechas
+ ✓ src/utils/formatters.test.js > formatters > devuelve la primera etapa si el id no existe
+ ✓ src/utils/formatters.test.js > formatters > busca el nombre del evaluador
+ ✓ src/utils/formatters.test.js > formatters > obtiene las iniciales
+ ✓ src/utils/formatters.test.js > filtrarCandidatos > busca por nombre, correo o cargo
+ ✓ src/utils/formatters.test.js > filtrarCandidatos > combina filtros de familia y origen
+ ✓ src/utils/validaciones.test.js > validarLogin > pide correo y contraseña
+ ✓ src/utils/validaciones.test.js > validarLogin > rechaza un correo sin formato válido
+ ✓ src/utils/validaciones.test.js > validarLogin > acepta credenciales completas
+ ✓ src/utils/validaciones.test.js > validarCandidato > no devuelve errores con datos correctos
+ ✓ src/utils/validaciones.test.js > validarCandidato > marca todos los campos obligatorios vacíos
+ ✓ src/utils/validaciones.test.js > validarCandidato > rechaza nombres con números
+ ✓ src/utils/validaciones.test.js > validarCandidato > acepta nombres con tildes y ñ
+ ✓ src/utils/validaciones.test.js > validarCandidato > acepta el teléfono 912345678
+ ✓ src/utils/validaciones.test.js > validarCandidato > acepta el teléfono +56912345678
+ ✓ src/utils/validaciones.test.js > validarCandidato > acepta el teléfono 56912345678
+ ✓ src/utils/validaciones.test.js > validarCandidato > acepta el teléfono +569 1234 5678
+ ✓ src/utils/validaciones.test.js > validarCandidato > rechaza el teléfono 812345678
+ ✓ src/utils/validaciones.test.js > validarCandidato > rechaza el teléfono 12345
+ ✓ src/utils/validaciones.test.js > validarCandidato > rechaza el teléfono +5691234567
+ ✓ src/utils/validaciones.test.js > validarCandidato > rechaza una familia de cargo que no existe
+ ✓ src/utils/validaciones.test.js > validarSolicitud > exige candidato, cargo, familia y analista
+ ✓ src/utils/validaciones.test.js > validarEvaluacion > exige al menos 20 caracteres de observaciones
+ ✓ src/utils/validaciones.test.js > validarEvaluacion > solo acepta los resultados definidos
+ ✓ src/utils/validaciones.test.js > validarCambioEtapa > permite avanzar a la etapa siguiente
+ ✓ src/utils/validaciones.test.js > validarCambioEtapa > no permite saltarse etapas
+ ✓ src/utils/validaciones.test.js > validarCambioEtapa > pide evaluador antes de agendar
+ ✓ src/utils/validaciones.test.js > validarCambioEtapa > pide fecha de entrevista antes de agendar
+ ✓ src/utils/validaciones.test.js > validarCambioEtapa > no permite enviar el informe sin evaluación registrada
+ ✓ src/utils/validaciones.test.js > validarCambioEtapa > permite retroceder una etapa
+ ✓ src/utils/validaciones.test.js > validarCambioEtapa > rechaza etapas que no existen
+ ✓ src/context/DataContext.test.js > dataReducer > guarda los datos cargados desde la API
+ ✓ src/context/DataContext.test.js > dataReducer > guarda el mensaje si la carga falla
+ ✓ src/context/DataContext.test.js > dataReducer > agrega un candidato nuevo al inicio de la lista
+ ✓ src/context/DataContext.test.js > dataReducer > reemplaza un candidato existente sin duplicarlo
+ ✓ src/context/DataContext.test.js > dataReducer > actualiza la etapa de una solicitud
+ ✓ src/context/DataContext.test.js > dataReducer > no modifica el estado anterior (inmutabilidad)
+ ✓ src/context/DataContext.test.js > dataReducer > limpia los datos al cerrar sesión
+ ✓ src/utils/dashboard.test.js > construirFilas > ordena de la solicitud más reciente a la más antigua
+ ✓ src/utils/dashboard.test.js > construirFilas > une la solicitud con el nombre del candidato y del evaluador
+ ✓ src/utils/dashboard.test.js > construirFilas > marca las solicitudes sin responsable
+ ✓ src/utils/dashboard.test.js > construirFilas > cuenta los días hasta el cierre o hasta hoy
+ ✓ src/utils/dashboard.test.js > construirFilas > solo muestra el resultado si la evaluación está finalizada
+ ✓ src/utils/dashboard.test.js > filtrarFilas > filtra por etapa
+ ✓ src/utils/dashboard.test.js > filtrarFilas > busca sin importar mayúsculas
+ ✓ src/utils/dashboard.test.js > filtrarFilas > filtra por responsable y por solicitudes sin asignar
+ ✓ src/utils/dashboard.test.js > filtrarFilas > sin filtros devuelve todas las filas
+ ✓ src/utils/dashboard.test.js > indicadores del panel > cuenta las solicitudes de cada etapa
+ ✓ src/utils/dashboard.test.js > indicadores del panel > resume solo las evaluaciones finalizadas
+ ✓ src/utils/dashboard.test.js > indicadores del panel > calcula el porcentaje de recomendados
+ ✓ src/utils/dashboard.test.js > indicadores del panel > calcula el promedio de días hasta el informe
+ ✓ src/utils/dashboard.test.js > indicadores del panel > cuenta la carga activa de cada evaluador
+ ✓ src/components/dashboard/TablaSolicitudes.test.jsx > TablaSolicitudes > muestra un mensaje cuando no hay resultados
+ ✓ src/components/dashboard/TablaSolicitudes.test.jsx > TablaSolicitudes > muestra una fila por solicitud con enlace al detalle
+ ✓ src/components/solicitudes/CambioEtapa.test.jsx > CambioEtapa > bloquea el avance y explica el motivo si falta el evaluador
+ ✓ src/pages/Login.test.jsx > Login > muestra errores si se envía vacío y no llama a la API
+ ✓ src/components/solicitudes/CambioEtapa.test.jsx > CambioEtapa > avanza a la etapa siguiente con el comentario escrito 442ms
+ ✓ src/components/solicitudes/CambioEtapa.test.jsx > CambioEtapa > muestra el error que devuelve el servidor
+ ✓ src/components/solicitudes/CambioEtapa.test.jsx > CambioEtapa > indica cuando el proceso ya terminó
+ ✓ src/pages/Login.test.jsx > Login > muestra el mensaje del servidor cuando las credenciales son incorrectas 546ms
+ ✓ src/pages/Login.test.jsx > Login > entra al panel y guarda la sesión cuando el login es correcto 620ms
+
+ Test Files  8 passed (8)
+      Tests  72 passed (72)
+   Start at  21:12:24
+   Duration  3.42s (transform 262ms, setup 2.20s, collect 1.65s, tests 2.08s, environment 7.44s, prepare 1.11s)
+

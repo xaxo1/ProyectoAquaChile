@@ -11,7 +11,13 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    environmentOptions: {
+      jsdom: {
+        url: 'http://localhost/',
+      },
+    },
     globals: true,
+    unstubGlobals: true,
     setupFiles: './src/setupTests.js',
     coverage: {
       include: ['src/**/*.{js,jsx}', 'server/**/*.js'],
