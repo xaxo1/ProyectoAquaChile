@@ -4,10 +4,25 @@ import { Link, Outlet } from 'react-router-dom';
 export default function LayoutPublico() {
   return (
     <div className="aq-app aq-app--publica">
+      <div className="aq-publica__fondo" aria-hidden="true">
+        <video
+          className="aq-publica__video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+        >
+          <source src="/video/acuicultura.mp4" type="video/mp4" />
+        </video>
+      </div>
       <header className="aq-publica__header">
         <div className="container-xl">
           <Link className="aq-brand" to="/login">
-            <img src="/favicon.svg" alt="" width="30" height="30" />
+            <img
+              src="/logo-aquachile.png"
+              alt="Logo AquaChile"
+              style={{ width: '110px', height: 'auto', objectFit: 'contain' }}/>
             <span>
               AquaChile
               <small>Reclutamiento y Selección</small>
