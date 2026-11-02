@@ -19,10 +19,7 @@ export default function LayoutPublico() {
       <header className="aq-publica__header">
         <div className="container-xl">
           <Link className="aq-brand" to="/login">
-            <img
-              src="/logo-aquachile.png"
-              alt="Logo AquaChile"
-              style={{ width: '110px', height: 'auto', objectFit: 'contain' }}/>
+            <img src="/logo-aquachile.png" alt="Logo AquaChile" className="aq-brand__logo" />
             <span>
               AquaChile
               <small>Reclutamiento y Selección</small>
