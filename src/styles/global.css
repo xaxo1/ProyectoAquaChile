@@ -169,6 +169,11 @@ body {
   font-weight: 400;
   color: rgba(255, 255, 255, 0.65);
 }
+.aq-brand__logo {
+  width: 110px;
+  height: auto;
+  object-fit: contain;
+}
 
 .aq-footer {
   padding: 1.25rem 0;

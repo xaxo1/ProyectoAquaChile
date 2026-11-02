@@ -18,7 +18,7 @@ export default function Navbar() {
     <nav className="navbar navbar-expand-lg aq-navbar" aria-label="Navegación principal">
       <div className="container-xl">
         <Link className="navbar-brand aq-brand" to="/" onClick={cerrarMenu}>
-          <img src="/favicon.svg" alt="" width="30" height="30" />
+          <img src="/logo-aquachile.png" alt="Logo AquaChile" className="aq-brand__logo" />
           <span>
             AquaChile
             <small>Evaluaciones psicolaborales</small>
